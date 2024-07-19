@@ -15,14 +15,8 @@ public class ComponentCommand implements ComponentReplacement {
   private final Pattern pattern;
   private final BaseComponent component;
 
-  public ComponentCommand(String commandName) {
-    pattern = Pattern.compile("\\$" + commandName);
-    component = new TextComponent(commandName.replaceFirst("(/)?[^:]+:(.+)", "$1$2"));
-    // Hover: "Left click to select"
-    component.setHoverEvent(new HoverEvent(
-        Action.SHOW_TEXT,
-        new Text(new TranslatableComponent("narration.recipe.usage"))));
-    component.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, commandName));
+  public ComponentCommand(String name) {
+    this(name, name);
   }
 
   public ComponentCommand(String name, String execution) {
@@ -32,7 +26,7 @@ public class ComponentCommand implements ComponentReplacement {
     component.setHoverEvent(new HoverEvent(
         Action.SHOW_TEXT,
         new Text(new TranslatableComponent("narration.button.usage.hovered")),
-        new Text(execution)));
+        new Text("\n" + execution)));
     component.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, execution));
   }
 

@@ -148,12 +148,11 @@ public final class Lang {
       @NotNull List<Object> segments,
       @NotNull ComponentReplacement replacement) {
     for (int index = 0; index < segments.size(); ++index) {
-      Object segment = segments.get(index);
-      if (!(segment instanceof String string)) {
+      if (!(segments.get(index) instanceof String segment)) {
         continue;
       }
 
-      Matcher matcher = replacement.getPattern().matcher(string);
+      Matcher matcher = replacement.getPattern().matcher(segment);
       int lastEnd = 0;
       while (matcher.find()) {
         // Since we have a match, we're replacing the segment.
@@ -164,22 +163,27 @@ public final class Lang {
         int start = matcher.start();
         // If there's unmatched text between the previous match and the current one, add it.
         if (start > lastEnd) {
-          segments.add(index, string.substring(lastEnd, start));
+          segments.add(index, segment.substring(lastEnd, start));
           ++index;
         }
         lastEnd = matcher.end();
 
         // Add the component.
-        segments.add(index, segment);
+        segments.add(index, replacement.getReplacement());
         ++index;
       }
 
-      if (lastEnd == string.length()) {
-        // If there is no substring after our last match, decrease index to point to our last match.
+      // If there was no match, nothing to do.
+      if (lastEnd == 0) {
+        continue;
+      }
+
+      if (lastEnd == segment.length()) {
+        // If there is no substring after the last match, decrease index to point to last addition.
         --index;
       } else {
         // Otherwise, add remaining text.
-        segments.add(index, string.substring(lastEnd));
+        segments.add(index, segment.substring(lastEnd));
       }
     }
   }
@@ -194,35 +198,45 @@ public final class Lang {
       if (segment instanceof String string) {
         // Legacy colored text.
         nextComponent = TextComponent.fromLegacy(string);
+
+        // If this is the first segment, keep track of it - it is the one that needs to be sent.
+        if (root == null) {
+          root = nextComponent;
+        }
+
+        // If there is a previous component, make this one a child of it to preserve formatting.
+        // This does result in some unnecessary nesting, but otherwise we would have to copy
+        // formatting each time, which would inflate JSON size by about the same amount in a
+        // best-case scenario - using colors is expected.
+        if (lastComponent != null) {
+          lastComponent.addExtra(nextComponent);
+        }
+
+        // Update the new final component.
+        lastComponent = nextComponent;
+        List<BaseComponent> extra = lastComponent.getExtra();
+        while (extra != null && !extra.isEmpty()) {
+          lastComponent = extra.getLast();
+          extra = lastComponent.getExtra();
+        }
       } else if (segment instanceof BaseComponent baseComponent) {
         // Modern component.
         nextComponent = baseComponent;
+
+        // If we're starting with a component, use a blank component as the root.
+        // This prevents hover and click events from applying to the whole message.
+        if (root == null) {
+          root = new TextComponent();
+          lastComponent = root;
+        }
+
+        // If there is a previous component, make this one a child of it to preserve formatting.
+        // Do not consider this component to be the new final component - see root above.
+        lastComponent.addExtra(nextComponent);
       } else {
         // Shouldn't be possible.
         JavaPlugin.getProvidingPlugin(Lang.class).getLogger()
             .warning("Unknown message segment type " + segment.getClass());
-        continue;
-      }
-
-      // If this is the first segment, keep track of it - it is the one that needs to be sent.
-      if (root == null) {
-        root = nextComponent;
-      }
-
-      // If there is a previous component, make this one a child of it to preserve formatting.
-      // This does result in some unnecessary nesting, but otherwise we would have to copy
-      // formatting each time, which would inflate JSON size by about the same amount in a
-      // best-case scenario - using colors is expected.
-      if (lastComponent != null) {
-        lastComponent.addExtra(nextComponent);
-      }
-
-      // Update the new final component.
-      lastComponent = nextComponent;
-      List<BaseComponent> extra = lastComponent.getExtra();
-      while (extra != null && !extra.isEmpty()) {
-        lastComponent = extra.getLast();
-        extra = lastComponent.getExtra();
       }
     }
 

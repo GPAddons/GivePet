@@ -57,7 +57,7 @@ public class ComponentTameable implements ComponentReplacement {
 
     AnimalTamer owner = tameable.getOwner();
     if (owner instanceof OfflinePlayer player) {
-      hover.addContent(new Text(Lang.getName(player.getPlayerProfile())));
+      hover.addContent(new Text("\n" + Lang.getName(player.getPlayerProfile())));
     }
 
     return hover;
