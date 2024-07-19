@@ -83,6 +83,7 @@ public class GivePetCommand implements TabExecutor {
       if (!senderPlayer.equals(target)
           && senderPlayer.canSee(target)
           && !senderData.ignoredPlayers.containsKey(target.getUniqueId())
+          && target.hasPermission("givepet.receive")
           && !GriefPrevention.instance.dataStore.getPlayerData(
           target.getUniqueId()).ignoredPlayers.containsKey(senderPlayer.getUniqueId())) {
         recipient = target;
@@ -151,7 +152,8 @@ public class GivePetCommand implements TabExecutor {
       // Don't suggest self, vanished players, or ignored players.
       if (senderPlayer.equals(player)
           || !senderPlayer.canSee(player)
-          || senderData.ignoredPlayers.containsKey(player.getUniqueId())) {
+          || senderData.ignoredPlayers.containsKey(player.getUniqueId())
+          || !player.hasPermission("givepet.receive")) {
         continue;
       }
       // Ensure name starts with section being completed.
