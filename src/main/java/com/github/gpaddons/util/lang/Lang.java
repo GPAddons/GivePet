@@ -16,6 +16,7 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.regex.Matcher;
+import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
@@ -79,7 +80,7 @@ public final class Lang {
 
   private static @Nullable String get(@NotNull ConfigMessage message) {
     String value = LANG.getString(message.getKey(), message.getDefault());
-    return value.isBlank() ? null : value;
+    return value.isBlank() ? null : ChatColor.translateAlternateColorCodes('&', value);
   }
 
   /**
