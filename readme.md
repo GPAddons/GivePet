@@ -3,6 +3,16 @@
 A GriefPrevention addon allowing players to transfer pets.
 
 ## Usage
-`/givepet <player>`: Try to give another person a pet!
-`/acceptpet`: Accept a pet!
-`/declinepet`: Decline a pet! If you're being spammed with pets, GivePet respects GriefPrevention's `/ignore`.
+`/givepet <player>` or `/transferpet <player>`:
+ * Offer someone a pet!
+   * Target must be online, visible, mutually not ignored, and have permission to accept or decline.
+ * Permission: `givepet.give`
+
+`/acceptpet`:
+ * Accept a pet!
+ * Permission: `givepet.receive`
+
+`/declinepet`:
+ * Decline a pet!
+ * Respects `/griefprevention:ignore`.
+ * Permission: `givepet.receive`
