@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -55,7 +56,11 @@ public final class Lang {
         return;
       }
 
-      Files.copy(resource, file.toPath());
+      Path writeTo = file.toPath();
+
+      Files.createDirectories(writeTo.getParent());
+
+      Files.copy(resource, writeTo);
     } catch (IOException e) {
       plugin.getLogger().log(Level.WARNING, e.getMessage(), e);
     }
