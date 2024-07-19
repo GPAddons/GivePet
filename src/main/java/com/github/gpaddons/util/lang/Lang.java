@@ -67,17 +67,6 @@ public final class Lang {
     }
   }
 
-  /**
-   * Check if a {@link ConfigMessage} is set to a non-null and non-empty value.
-   *
-   * @param message the Message
-   * @return true if the message has content
-   */
-  public static boolean isSet(@NotNull ConfigMessage message) {
-    String value = get(message);
-    return value != null && !value.isEmpty();
-  }
-
   private static @Nullable String get(@NotNull ConfigMessage message) {
     String value = LANG.getString(message.getKey(), message.getDefault());
     return value.isBlank() ? null : ChatColor.translateAlternateColorCodes('&', value);
