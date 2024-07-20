@@ -1,0 +1,32 @@
+name: Draft Github Release
+
+on:
+  push:
+    tags:
+      - '**'
+
+jobs:
+  run-ci:
+    uses: Jikoo/PlanarActions/.github/workflows/ci_maven.yml@master
+  draft-release:
+    needs: [ run-ci ]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Download build
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ github.event.repository.name }}-ci
+          path: dist
+
+      - name: Create Release
+        id: create-release
+        uses: softprops/action-gh-release@v2.0.8
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          name: ${{ github.event.repository.name }} ${{  github.ref_name }}
+          draft: true
+          prerelease: contains( github.ref_name, '-' )
+          files: ./dist/**
