@@ -4,8 +4,11 @@ import com.github.gpaddons.givepet.Gift;
 import com.github.gpaddons.givepet.GiftManager;
 import java.util.List;
 import java.util.Objects;
+import com.github.gpaddons.givepet.lang.ComponentTameable;
 import com.github.gpaddons.givepet.lang.Messages;
 import com.github.gpaddons.util.lang.Lang;
+import com.github.gpaddons.util.lang.replacement.TextReplacer;
+import com.github.gpaddons.util.lang.replacement.TextReplacerOwner;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -48,9 +51,12 @@ public class AcceptPetCommand implements TabExecutor {
     Entity entity = Bukkit.getEntity(gift.tamed());
     if (!(entity instanceof Tameable tameable)) {
       if (from != null) {
-        Lang.send(from, Messages.RECEIVE_NOT_FOUND_SENDER);
+        Lang.send(
+            from,
+            Messages.RECEIVE_NOT_FOUND_SENDER,
+            new TextReplacerOwner("recipient", recipient.getPlayerProfile()));
       }
-      Lang.send(recipient, Messages.RECEIVE_NOT_FOUND_RECIPIENT);
+      Lang.send(recipient, Messages.RECEIVE_NOT_FOUND_RECIPIENT, new TextReplacerOwner(gift.from()));
       return true;
     }
 
@@ -61,9 +67,17 @@ public class AcceptPetCommand implements TabExecutor {
       sittable.setSitting(false);
     }
 
-    Lang.send(recipient, Messages.RECEIVE_ACCEPT_RECIPIENT);
+    Lang.send(
+        recipient,
+        Messages.RECEIVE_ACCEPT_RECIPIENT,
+        new TextReplacer[]{ new TextReplacerOwner(gift.from()) },
+        new ComponentTameable(tameable));
     if (from != null) {
-      Lang.send(from, Messages.RECEIVE_ACCEPT_SENDER);
+      Lang.send(
+          from,
+          Messages.RECEIVE_ACCEPT_SENDER,
+          new TextReplacer[]{ new TextReplacerOwner("recipient", gift.from()) },
+          new ComponentTameable(tameable));
     }
 
     return true;

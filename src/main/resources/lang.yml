@@ -1,26 +1,36 @@
 send:
   pending:
+    # Supports $recipientName, $recipientId
     from: "&cYou already have a pending transfer to &b$recipientName!&c Please wait for them to respond."
+    # Supports $recipientName, $recipientId
     to: "&b$recipientName&a already has a pending pet transfer! Please wait for them to respond."
   target_tameable: "&cYou must target a creature you have tamed to transfer!"
   no_recipient: "&cInvalid recipient!"
+  # Supports $ownerName, $ownerId, $tamed
   offer: |-
     &b$ownerName&a would like to transfer &b[$tamed]&a to you!
     You have two minutes to &b[$/acceptpet]&a or &b[$/declinepet]&a.
-  offered: "&aOffered &b[$tamed]&a to &b$recipientName&a!"
+  # Supports $recipientName, $recipientId, $tamed
+  offered: "&aOffered &b[$tamed]&a to &b$recipientName&a! They have two minutes to respond."
 receive:
   no_pending: "&cYou don't have any pending pet transfers!"
   not_found:
+    # Supports $recipientName, $recipientId
     sender: "&cUnable to transfer pet! Please make sure you stay near it until the transfer completes."
+    # Supports $ownerName, $ownerId
     recipient: "&cUnable to locate pet!"
   accept:
+    # Supports $recipientName, $recipientId, $tamed
     sender: "&aPet transferred!"
+    # Supports $ownerName, $ownerId, $tamed
     recipient: "&aPet transferred!"
   decline:
+    # Supports $recipientName, $recipientId
     sender: "&cPet transfer declined!"
+    # Supports $ownerName, $ownerId, $/ignore
     recipient: |-
       &aDeclined pet transfer from &b$ownerName&a!
-      &aIf they continue to send you unwanted pets, you can &b[$/ignore]&a them.
+      If they continue to send you unwanted pets, you can &b[$/ignore]&a them.
 general:
     admin: "an administrator"
     unnamed_player: "someone ($uuid)"

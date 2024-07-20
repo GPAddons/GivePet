@@ -50,7 +50,7 @@ public class DeclinePetCommand implements TabExecutor {
     if (!manager.isExpired(gift)) {
       Player from = Bukkit.getPlayer(Objects.requireNonNull(gift.from().getUniqueId()));
       if (from != null) {
-        Lang.send(from, Messages.RECEIVE_DECLINE_SENDER);
+        Lang.send(from, Messages.RECEIVE_DECLINE_SENDER, new TextReplacerOwner("recipient", gift.to()));
       }
     }
 
