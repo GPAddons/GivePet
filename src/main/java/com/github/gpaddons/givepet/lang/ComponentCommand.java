@@ -9,25 +9,22 @@ import net.md_5.bungee.api.chat.HoverEvent.Action;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.chat.TranslatableComponent;
 import net.md_5.bungee.api.chat.hover.content.Text;
+import org.jetbrains.annotations.NotNull;
 
 public class ComponentCommand implements ComponentReplacement {
 
   private final Pattern pattern;
-  private final BaseComponent component;
+  private final @NotNull String name;
+  private final @NotNull String execution;
 
-  public ComponentCommand(String name) {
+  public ComponentCommand(@NotNull String name) {
     this(name, name);
   }
 
-  public ComponentCommand(String name, String execution) {
+  public ComponentCommand(@NotNull String name, @NotNull String execution) {
     pattern = Pattern.compile("\\$" + name);
-    component = new TextComponent(name);
-    // Hover: "Left click to activate"
-    component.setHoverEvent(new HoverEvent(
-        Action.SHOW_TEXT,
-        new Text(new TranslatableComponent("narration.button.usage.hovered")),
-        new Text("\n" + execution)));
-    component.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, execution));
+    this.name = name;
+    this.execution = execution;
   }
 
   @Override
@@ -37,6 +34,13 @@ public class ComponentCommand implements ComponentReplacement {
 
   @Override
   public BaseComponent getReplacement() {
+    BaseComponent component = new TextComponent(name);
+    // Hover: "Left click to activate"
+    component.setHoverEvent(new HoverEvent(
+        Action.SHOW_TEXT,
+        new Text(new TranslatableComponent("narration.button.usage.hovered")),
+        new Text("\n" + execution)));
+    component.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, execution));
     return component;
   }
 
