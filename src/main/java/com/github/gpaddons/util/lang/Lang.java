@@ -4,7 +4,7 @@ import com.github.gpaddons.util.lang.replacement.ComponentReplacement;
 import com.github.gpaddons.util.lang.replacement.TextReplacer;
 import com.github.gpaddons.util.lang.value.CommonValues;
 import com.github.gpaddons.util.lang.value.ConfigMessage;
-import com.github.gpaddons.util.lang.value.ConfigReplacement;
+import com.github.gpaddons.util.lang.value.ConfigRequired;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -16,6 +16,9 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.regex.Matcher;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -35,6 +38,9 @@ public final class Lang {
 
   private static final String LANG_FILE = "lang.yml";
   private static final @NotNull YamlConfiguration LANG;
+  private static final LoadingCache<UUID, PlayerProfile> PROFILES = CacheBuilder.newBuilder()
+      .maximumSize(20)
+      .build(CacheLoader.from(uuid -> Bukkit.getOfflinePlayer(uuid).getPlayerProfile()));
 
   static {
     Plugin plugin = JavaPlugin.getProvidingPlugin(Lang.class);
@@ -107,14 +113,16 @@ public final class Lang {
       @NotNull ComponentReplacement @NotNull ... componentReplacements) {
     String value = get(message);
 
-    if (value == null || value.isEmpty()) {
+    if (value == null) {
       return;
     }
 
+    // Do plain text replacement.
     for (TextReplacer replacer : textReplacers) {
       value = replacer.replace(value);
     }
 
+    // If there are no component replacements being done, the message is ready for sending.
     if (componentReplacements.length == 0) {
       recipient.sendMessage(value);
       return;
@@ -123,10 +131,19 @@ public final class Lang {
     List<Object> segments = new ArrayList<>();
     segments.add(value);
 
+    // Remove component placeholders in plain text and replace with components.
     for (ComponentReplacement replacement : componentReplacements) {
       insertComponents(segments, replacement);
     }
 
+    // If there is only one segment in plain text, no replacements were made. Send plain text.
+    if (segments.size() == 1 && segments.getFirst() instanceof String finalizedMessage) {
+      recipient.sendMessage(finalizedMessage);
+      return;
+    }
+
+    // Merge the components into one.
+    // Subsequent components are children to preserve legacy formatting behavior.
     BaseComponent component = joinSegments(segments);
     if (component != null) {
       recipient.spigot().sendMessage(component);
@@ -194,9 +211,6 @@ public final class Lang {
         }
 
         // If there is a previous component, make this one a child of it to preserve formatting.
-        // This does result in some unnecessary nesting, but otherwise we would have to copy
-        // formatting each time, which would inflate JSON size by about the same amount in a
-        // best-case scenario - using colors is expected.
         if (lastComponent != null) {
           lastComponent.addExtra(nextComponent);
         }
@@ -246,19 +260,18 @@ public final class Lang {
       return get(CommonValues.ADMIN);
     }
 
-    // TODO offline cache
-    return getName(Bukkit.getOfflinePlayer(uuid).getPlayerProfile());
+    return getName(PROFILES.getUnchecked(uuid));
   }
 
   /**
-   * Get the value for a {@link ConfigReplacement}.
+   * Get the value for a {@link ConfigRequired}.
    *
    * <p>Because the values are used in replacement, they are never null or empty.
    *
    * @param message the ComponentMessage
    * @return the value set or the default if unset
    */
-  public static @NotNull String get(@NotNull ConfigReplacement message) {
+  public static @NotNull String get(@NotNull ConfigRequired message) {
     String value = LANG.getString(message.getKey(), null);
     return value != null && !value.isBlank() ? value : message.getDefault();
   }

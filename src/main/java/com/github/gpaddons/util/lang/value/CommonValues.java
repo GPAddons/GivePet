@@ -3,9 +3,9 @@ package com.github.gpaddons.util.lang.value;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * An enum for common {@link ConfigReplacement ConfigReplacements}.
+ * An enum for common {@link ConfigRequired ConfigReplacements}.
  */
-public enum CommonValues implements ConfigReplacement {
+public enum CommonValues implements ConfigRequired {
 
   ADMIN("general.admin", "an administrator"),
   UNNAMED_PLAYER("general.unnamed_player", "someone ($uuid)");

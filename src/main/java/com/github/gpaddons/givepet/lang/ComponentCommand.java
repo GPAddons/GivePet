@@ -28,12 +28,12 @@ public class ComponentCommand implements ComponentReplacement {
   }
 
   @Override
-  public Pattern getPattern() {
+  public @NotNull Pattern getPattern() {
     return pattern;
   }
 
   @Override
-  public BaseComponent getReplacement() {
+  public @NotNull BaseComponent getReplacement() {
     BaseComponent component = new TextComponent(name);
     // Hover: "Left click to activate"
     component.setHoverEvent(new HoverEvent(

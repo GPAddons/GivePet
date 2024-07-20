@@ -26,12 +26,12 @@ public class ComponentTameable implements ComponentReplacement {
   }
 
   @Override
-  public Pattern getPattern() {
+  public @NotNull Pattern getPattern() {
     return PATTERN;
   }
 
   @Override
-  public BaseComponent getReplacement() {
+  public @NotNull BaseComponent getReplacement() {
     BaseComponent component;
     String customName = tameable.getCustomName();
     if (customName != null) {
