@@ -8,11 +8,11 @@
   <artifactId>givepet</artifactId>
   <version>1.0.1-SNAPSHOT</version>
   <name>GivePet</name>
-  <description>GenericDescription</description>
+  <description>A GriefPrevention addon for pet transfers.</description>
 
   <developers>
     <developer>
-      <name>GenericAuthor</name>
+      <name>Jikoo</name>
     </developer>
   </developers>
 
