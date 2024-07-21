@@ -7,6 +7,12 @@ description: "${project.description}"
 depend:
   - "GriefPrevention"
 
+permissions:
+  givepet.give:
+    default: true
+  givepet.receive:
+    default: true
+
 commands:
   givepet:
     aliases: [ "transferpet" ]
