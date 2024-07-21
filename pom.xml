@@ -6,7 +6,7 @@
 
   <groupId>com.github.gpaddons</groupId>
   <artifactId>givepet</artifactId>
-  <version>1.0.1-SNAPSHOT</version>
+  <version>1.0.1</version>
   <name>GivePet</name>
   <description>A GriefPrevention addon for pet transfers.</description>
 
