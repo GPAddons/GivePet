@@ -3,6 +3,7 @@ package com.github.gpaddons.givepet;
 import com.github.gpaddons.givepet.command.AcceptPetCommand;
 import com.github.gpaddons.givepet.command.DeclinePetCommand;
 import com.github.gpaddons.givepet.command.GivePetCommand;
+import me.ryanhamshire.GriefPrevention.GriefPrevention;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -27,9 +28,16 @@ public class GivePet extends JavaPlugin {
     }
 
     GiftManager manager = new GiftManager();
-    registerCommand("givepet", new GivePetCommand(manager));
+    GivePetCommand givePetCommand = new GivePetCommand(manager);
+    registerCommand("givepet", givePetCommand);
     registerCommand("acceptpet", new AcceptPetCommand(manager));
     registerCommand("declinepet", new DeclinePetCommand(manager));
+
+    // Take over GriefPrevention's /givepet if present.
+    PluginCommand gpGivePet = GriefPrevention.instance.getCommand("givepet");
+    if (gpGivePet != null) {
+      gpGivePet.setExecutor(givePetCommand);
+    }
   }
 
   private void registerCommand(String name, TabExecutor executor) {

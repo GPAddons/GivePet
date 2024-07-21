@@ -12,9 +12,6 @@ GivePet into your plugins folder.
  * Offer someone a pet!
    * Target must be online, visible, mutually not ignored with GriefPrevention, and have permission to accept or decline.
  * Permission: `givepet.give`
- * If a version of GriefPrevention is installed that features `/givepet`, GriefPrevention's
-   version will take precedence. This can be worked around with an
-   [alias](https://github.com/Jikoo/OpenInv/wiki/Customizing-Aliases#setting-up-an-alias).
 
 `/acceptpet`:
  * Accept a pet!
